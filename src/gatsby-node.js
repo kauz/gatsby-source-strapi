@@ -57,22 +57,23 @@ exports.sourceNodes = async (
       jwtToken,
       queryLimit,
       reporter,
-      isSingleType: false
+      isSingleType: false,
     })
   )
 
   // Add single types to the list of promises
   singleTypes.map(contentType =>
-    promises.push(fetchData({
-      apiURL,
-      contentType,
-      jwtToken,
-      queryLimit,
-      reporter,
-      isSingleType: true
-    }))
+    promises.push(
+      fetchData({
+        apiURL,
+        contentType,
+        jwtToken,
+        queryLimit,
+        reporter,
+        isSingleType: true,
+      })
+    )
   )
-  
 
   // Execute the promises.
   let entities = await Promise.all(promises)
@@ -88,10 +89,10 @@ exports.sourceNodes = async (
   })
 
   //merge contentTypes and singleTypes
-  singleTypes.forEach((item) => {
-    contentTypes.push(item);
+  singleTypes.forEach(item => {
+    contentTypes.push(item)
   })
-  
+
   contentTypes.forEach((contentType, i) => {
     const items = entities[i]
     items.forEach((item, i) => {

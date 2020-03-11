@@ -26,14 +26,23 @@ module.exports = function () {
         contentType = _ref2.contentType,
         jwtToken = _ref2.jwtToken,
         queryLimit = _ref2.queryLimit,
-        reporter = _ref2.reporter;
-    var apiBase, apiEndpoint, fetchRequestConfig, documents;
+        reporter = _ref2.reporter,
+        isSingleType = _ref2.isSingleType;
+    var apiBase, apiEndpoint, fetchRequestConfig, documents, response, test;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             // Define API endpoint.
-            apiBase = apiURL + '/' + (0, _pluralize2.default)(contentType);
+            apiBase = '';
+
+
+            if (isSingleType) {
+              apiBase = apiURL + '/' + contentType;
+            } else {
+              apiBase = apiURL + '/' + (0, _pluralize2.default)(contentType);
+            }
+
             apiEndpoint = apiBase + '?_limit=' + queryLimit;
 
 
@@ -49,16 +58,24 @@ module.exports = function () {
             }
 
             // Make API request.
-            _context.next = 7;
+            _context.next = 8;
             return (0, _axios2.default)(apiEndpoint, fetchRequestConfig);
 
-          case 7:
+          case 8:
             documents = _context.sent;
-            return _context.abrupt('return', documents.data.map(function (item) {
-              return clean(item);
-            }));
 
-          case 9:
+
+            // Make sure response is an array for single type instances
+            response = documents.data.length ? documents.data : [documents.data];
+
+            // Map and clean data.
+
+            test = response.map(function (item) {
+              return clean(item);
+            });
+            return _context.abrupt('return', test);
+
+          case 12:
           case 'end':
             return _context.stop();
         }

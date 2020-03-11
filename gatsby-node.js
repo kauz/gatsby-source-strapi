@@ -40,6 +40,8 @@ exports.sourceNodes = function () {
         apiURL = _ref3$apiURL === undefined ? 'http://localhost:1337' : _ref3$apiURL,
         _ref3$contentTypes = _ref3.contentTypes,
         contentTypes = _ref3$contentTypes === undefined ? [] : _ref3$contentTypes,
+        _ref3$singleTypes = _ref3.singleTypes,
+        singleTypes = _ref3$singleTypes === undefined ? [] : _ref3$singleTypes,
         _ref3$loginData = _ref3.loginData,
         loginData = _ref3$loginData === undefined ? {} : _ref3$loginData,
         _ref3$queryLimit = _ref3.queryLimit,
@@ -104,18 +106,31 @@ exports.sourceNodes = function () {
                 contentType: contentType,
                 jwtToken: jwtToken,
                 queryLimit: queryLimit,
-                reporter: reporter
+                reporter: reporter,
+                isSingleType: false
               });
             });
 
-            // Execute the promises.
+            // Add single types to the list of promises
 
-            _context.next = 22;
+            singleTypes.map(function (contentType) {
+              return promises.push((0, _fetch2.default)({
+                apiURL: apiURL,
+                contentType: contentType,
+                jwtToken: jwtToken,
+                queryLimit: queryLimit,
+                reporter: reporter,
+                isSingleType: true
+              }));
+            });
+
+            // Execute the promises.
+            _context.next = 23;
             return _promise2.default.all(promises);
 
-          case 22:
+          case 23:
             entities = _context.sent;
-            _context.next = 25;
+            _context.next = 26;
             return _normalize2.default.downloadMediaFiles({
               entities: entities,
               apiURL: apiURL,
@@ -126,9 +141,14 @@ exports.sourceNodes = function () {
               jwtToken: jwtToken
             });
 
-          case 25:
+          case 26:
             entities = _context.sent;
 
+
+            //merge contentTypes and singleTypes
+            singleTypes.forEach(function (item) {
+              contentTypes.push(item);
+            });
 
             contentTypes.forEach(function (contentType, i) {
               var items = entities[i];
@@ -140,7 +160,7 @@ exports.sourceNodes = function () {
 
             fetchActivity.end();
 
-          case 28:
+          case 30:
           case 'end':
             return _context.stop();
         }
